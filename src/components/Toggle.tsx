@@ -14,7 +14,7 @@ export function Toggle({ activo, onChange, label, disabled }: ToggleProps) {
       aria-label={label}
       disabled={disabled}
       onClick={() => onChange(!activo)}
-      className="flex h-11 w-11 shrink-0 items-center justify-center disabled:opacity-40"
+      className="flex h-11 min-w-11 shrink-0 items-center justify-center disabled:opacity-40"
     >
       <span className={`relative h-7 w-12 rounded-full transition-colors ${activo ? 'bg-success' : 'bg-surface-sunken'}`}>
         <span

@@ -1,5 +1,5 @@
 # ESTADO — CajaBella
-Última actualización: 2026-07-14 | Sesión 3 completada — falta que el usuario publique en GitHub Pages
+Última actualización: 2026-07-14 | 🎉 App publicada y funcionando en https://ctaboadaa.github.io/CajaBella/
 
 ## Qué es esta app (3 líneas máximo)
 Herramienta interna (NO se vende) para que el personal de un salón de belleza registre cada servicio prestado (fecha, tipo, monto en soles, cliente opcional) y la dueña vea un dashboard con lo facturado. Sin monetización ni versión multi-negocio: un solo salón, uso privado.
@@ -9,7 +9,7 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 
 ## Decisiones técnicas (NO re-discutir sin pedirlo el usuario)
 - Framework: Vite + React + TypeScript + Tailwind v4 — decidido 2026-07-14 (herramienta interna sin SEO → Vite, no Next.js)
-- Hosting: GitHub Pages (gratis), despliegue automático vía GitHub Actions (`.github/workflows/deploy.yml`) — configurado en Sesión 3, falta que el usuario publique el repo (ver `docs/DESPLIEGUE.md`)
+- Hosting: GitHub Pages (gratis), despliegue automático vía GitHub Actions (`.github/workflows/deploy.yml`) — publicada y verificada en https://ctaboadaa.github.io/CajaBella/
 - Backend/BFF: Google Apps Script (`backend/Code.gs`), desplegado como Web App — evita exponer credenciales en el frontend estático
 - Base de datos: Google Sheets del usuario, con pestañas `Usuarios`, `Servicios`, `TiposDeServicio`, `Sesiones` (creadas por la función `setup()`)
 - Sin multi-tenant / sin RLS: un solo negocio, todo usuario autenticado ve todos los datos del salón
@@ -58,8 +58,9 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 ## Pendientes del usuario (acciones que el usuario debe hacer)
 - [x] Crear la Google Sheet y desplegar `backend/Code.gs` como Web App
 - [x] Pegar la URL del Web App en `.env`
-- [ ] Cambiar la contraseña del admin (`cambiar123`) — ya existe la pantalla en Ajustes → "Cambiar mi contraseña"
-- [ ] Publicar en GitHub Pages siguiendo `docs/DESPLIEGUE.md` (instalar GitHub Desktop, publicar el repo, activar Pages) — así el personal puede usar la app desde una dirección web real
+- [x] Publicar en GitHub Pages (listo, con GitHub Actions publicando solo en cada push)
+- [ ] Cambiar la contraseña del admin (`cambiar123`) — pantalla en Ajustes → "Cambiar mi contraseña"
+- [ ] Compartir el link `https://ctaboadaa.github.io/CajaBella/` con el personal del salón para que empiecen a registrar servicios
 
 ## Notas para la próxima sesión
 - El usuario no es técnico — explicar todo en simple, traducir jerga la primera vez.

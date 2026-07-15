@@ -71,7 +71,7 @@ export function RegistrarServicio() {
         <p className="mb-5 text-sm text-ink-soft">Anota cada servicio apenas lo termines.</p>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-4 rounded-card border border-line bg-surface p-6">
-          <div>
+          <div className="min-w-0">
             <label htmlFor="fecha" className="mb-1.5 block text-sm font-medium text-ink">
               Fecha
             </label>
@@ -81,11 +81,11 @@ export function RegistrarServicio() {
               value={fecha}
               max={hoyISO()}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full rounded-control border border-line bg-bg px-4 py-3 text-base text-ink outline-none transition-colors focus:border-accent"
+              className="w-full min-w-0 rounded-control border border-line bg-bg px-3 py-3 text-base text-ink outline-none transition-colors focus:border-accent"
             />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label htmlFor="tipo" className="mb-1.5 block text-sm font-medium text-ink">
               Tipo de servicio
             </label>
@@ -119,7 +119,7 @@ export function RegistrarServicio() {
             )}
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label htmlFor="monto" className="mb-1.5 block text-sm font-medium text-ink">
               Monto
             </label>
@@ -134,15 +134,15 @@ export function RegistrarServicio() {
                 placeholder="0.00"
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
-                className="w-full rounded-control border border-line bg-bg py-3 pl-10 pr-4 text-base text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent"
+                className="w-full min-w-0 rounded-control border border-line bg-bg py-3 pl-10 pr-4 text-base text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent"
               />
             </div>
           </div>
 
-          <div className="border-t border-line pt-4">
+          <div className="min-w-0 border-t border-line pt-4">
             <p className="mb-3 text-xs font-medium uppercase tracking-wide text-ink-faint">Datos del cliente (opcional)</p>
             <div className="flex flex-col gap-3">
-              <div>
+              <div className="min-w-0">
                 <label htmlFor="clienteNombre" className="sr-only">
                   Nombre del cliente
                 </label>
@@ -154,11 +154,11 @@ export function RegistrarServicio() {
                     placeholder="Nombre del cliente"
                     value={clienteNombre}
                     onChange={(e) => setClienteNombre(e.target.value)}
-                    className="w-full rounded-control border border-line bg-bg py-3 pl-10 pr-4 text-base text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent"
+                    className="w-full min-w-0 rounded-control border border-line bg-bg py-3 pl-10 pr-4 text-base text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent"
                   />
                 </div>
               </div>
-              <div>
+              <div className="min-w-0">
                 <label htmlFor="clienteTelefono" className="sr-only">
                   Teléfono del cliente
                 </label>
@@ -167,10 +167,12 @@ export function RegistrarServicio() {
                   <input
                     id="clienteTelefono"
                     type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
                     placeholder="Teléfono"
                     value={clienteTelefono}
                     onChange={(e) => setClienteTelefono(e.target.value)}
-                    className="w-full rounded-control border border-line bg-bg py-3 pl-10 pr-4 text-base text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent"
+                    className="w-full min-w-0 rounded-control border border-line bg-bg py-3 pl-10 pr-4 text-base text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent"
                   />
                 </div>
               </div>

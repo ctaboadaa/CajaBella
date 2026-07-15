@@ -9,7 +9,7 @@ var SHEET_SERVICIOS = 'Servicios';
 var SHEET_TIPOS = 'TiposDeServicio';
 var SHEET_SESIONES = 'Sesiones';
 
-var SESION_HORAS_VALIDEZ = 12;
+var SESION_HORAS_VALIDEZ = 45 * 24; // 45 días
 
 // ---------------------------------------------------------------------------
 // SETUP — correr UNA VEZ manualmente desde el editor (menú "Ejecutar" > setup)
@@ -260,18 +260,19 @@ function listarUsuarios_(usuarioAutenticado) {
 // ---------------------------------------------------------------------------
 function dashboard_(usuarioAutenticado, fecha) {
   var hoy = fecha || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  var mes = hoy.substring(0, 7); // "yyyy-MM" del día que se está viendo
   var servicios = obtenerFilas_(SHEET_SERVICIOS);
   var tipos = obtenerFilas_(SHEET_TIPOS);
   var nombrePorTipoId = {};
   tipos.forEach(function (t) { nombrePorTipoId[t.id] = t.nombre; });
 
-  var totalAcumulado = 0;
+  var totalMes = 0;
   var totalDia = 0;
   var cantidadDia = 0;
   var conteoPorTipo = {};
 
   servicios.forEach(function (s) {
-    totalAcumulado += Number(s.monto) || 0;
+    if (s.fecha.substring(0, 7) === mes) totalMes += Number(s.monto) || 0;
     if (s.fecha === hoy) {
       totalDia += Number(s.monto) || 0;
       cantidadDia += 1;
@@ -284,7 +285,7 @@ function dashboard_(usuarioAutenticado, fecha) {
     .sort(function (a, b) { return b.cantidad - a.cantidad; })
     .slice(0, 2);
 
-  return { ok: true, fecha: hoy, totalAcumulado: totalAcumulado, totalDia: totalDia, cantidadDia: cantidadDia, topServicios: topServicios };
+  return { ok: true, fecha: hoy, mes: mes, totalMes: totalMes, totalDia: totalDia, cantidadDia: cantidadDia, topServicios: topServicios };
 }
 
 // ---------------------------------------------------------------------------

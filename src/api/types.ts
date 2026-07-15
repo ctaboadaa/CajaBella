@@ -27,7 +27,8 @@ export interface Servicio {
 
 export interface DashboardData {
   fecha: string;
-  totalAcumulado: number;
+  mes: string;
+  totalMes: number;
   totalDia: number;
   cantidadDia: number;
   topServicios: { nombre: string; cantidad: number }[];

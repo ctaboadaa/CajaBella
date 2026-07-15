@@ -6,7 +6,7 @@ import { useAuth } from '../auth/AuthContext';
 import { api } from '../api/client';
 import type { DashboardData } from '../api/types';
 import { useCountUp } from '../hooks/useCountUp';
-import { formatMonto, formatFechaCorta, hoyISO, sumarDias } from '../lib/format';
+import { formatMonto, formatFechaCorta, formatMesLargo, hoyISO, sumarDias } from '../lib/format';
 
 type Estado =
   | { tipo: 'cargando' }
@@ -35,7 +35,7 @@ export function Resumen() {
   }, [token, fecha]);
 
   const esHoy = fecha === hoyISO();
-  const totalAcumulado = useCountUp(estado.tipo === 'listo' ? estado.datos.totalAcumulado : 0);
+  const totalMes = useCountUp(estado.tipo === 'listo' ? estado.datos.totalMes : 0);
   const totalDia = useCountUp(estado.tipo === 'listo' ? estado.datos.totalDia : 0);
 
   return (
@@ -58,16 +58,16 @@ export function Resumen() {
             >
               <div className="mb-1 flex items-center gap-2 text-sm text-ink-soft">
                 <Sparkle size={16} className="text-gold" weight="fill" />
-                Total acumulado
+                Total del mes
               </div>
               {estado.tipo === 'cargando' ? (
                 <div className="h-11 w-40 animate-pulse rounded-control bg-surface-elevated" />
               ) : (
                 <p className="text-4xl text-accent" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {formatMonto(totalAcumulado)}
+                  {formatMonto(totalMes)}
                 </p>
               )}
-              <p className="mt-1 text-xs text-ink-faint">Desde que empezaste a usar CajaBella</p>
+              <p className="mt-1 text-xs text-ink-faint">{estado.tipo === 'listo' ? formatMesLargo(estado.datos.mes) : ' '}</p>
             </motion.div>
 
             {/* Día con navegación */}
