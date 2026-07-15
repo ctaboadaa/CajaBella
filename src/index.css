@@ -1,0 +1,73 @@
+@import "tailwindcss";
+@import "@fontsource/instrument-serif";
+@import "@fontsource/work-sans/400.css";
+@import "@fontsource/work-sans/500.css";
+@import "@fontsource/work-sans/600.css";
+@import "@fontsource/work-sans/700.css";
+
+@theme {
+  /* Fondo y superficies */
+  --color-bg: #fbf5f2;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #f5e9e3;
+  --color-surface-sunken: #f0e3dc;
+
+  /* Texto */
+  --color-ink: #322022;
+  --color-ink-soft: #7a5c60;
+  --color-ink-faint: #a3898c;
+
+  /* Acento (usar SOLO en CTA y dato clave) */
+  --color-accent: #b5495b;
+  --color-accent-soft: #f2dde1;
+  --color-accent-strong: #8f3547;
+
+  /* Secundario funcional (solo insignias / highlights puntuales) */
+  --color-gold: #a9825a;
+  --color-gold-soft: #f0e6d8;
+
+  /* Semánticos */
+  --color-success: #4f8f6b;
+  --color-success-soft: #e2f0e8;
+  --color-warning: #d98c2b;
+  --color-warning-soft: #faecd8;
+  --color-error: #c9483a;
+  --color-error-soft: #fae3e0;
+
+  /* Bordes */
+  --color-line: #e8d9d1;
+
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-sans: "Work Sans", "Segoe UI", sans-serif;
+
+  --radius-card: 20px;
+  --radius-control: 14px;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    color: var(--color-ink);
+    font-weight: 400;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

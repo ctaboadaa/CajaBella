@@ -1,0 +1,45 @@
+export type Rol = 'admin' | 'empleado';
+
+export interface Usuario {
+  id: string;
+  nombre: string;
+  usuario: string;
+  rol: Rol;
+  activo?: boolean;
+}
+
+export interface TipoServicio {
+  id: string;
+  nombre: string;
+  activo: boolean;
+}
+
+export interface Servicio {
+  id: string;
+  fecha: string;
+  tipoServicioId: string;
+  monto: number;
+  clienteNombre: string;
+  clienteTelefono: string;
+  usuarioId: string;
+  creadoEn: string;
+}
+
+export interface DashboardData {
+  fecha: string;
+  totalAcumulado: number;
+  totalDia: number;
+  cantidadDia: number;
+  topServicios: { nombre: string; cantidad: number }[];
+}
+
+export interface ApiOk<T> {
+  ok: true;
+  [key: string]: unknown;
+  data?: T;
+}
+
+export interface ApiError {
+  ok: false;
+  error: string;
+}
