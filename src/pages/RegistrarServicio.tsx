@@ -1,10 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CheckCircle, User, Phone } from '@phosphor-icons/react';
+import { CalendarBlank, CheckCircle, User, Phone } from '@phosphor-icons/react';
 import { useAuth } from '../auth/AuthContext';
 import { api } from '../api/client';
 import type { TipoServicio } from '../api/types';
-import { hoyISO } from '../lib/format';
+import { hoyISO, formatFechaLarga } from '../lib/format';
 
 type TiposEstado = { tipo: 'cargando' } | { tipo: 'error'; mensaje: string } | { tipo: 'listo'; opciones: TipoServicio[] };
 
@@ -75,14 +75,24 @@ export function RegistrarServicio() {
             <label htmlFor="fecha" className="mb-1.5 block text-sm font-medium text-ink">
               Fecha
             </label>
-            <input
-              id="fecha"
-              type="date"
-              value={fecha}
-              max={hoyISO()}
-              onChange={(e) => setFecha(e.target.value)}
-              className="w-full min-w-0 rounded-control border border-line bg-bg px-3 py-3 text-base text-ink outline-none transition-colors focus:border-accent"
-            />
+            {/* El input nativo va invisible encima; solo lo usamos para abrir el calendario del
+                teléfono. Lo que se VE es este texto propio, así el render nativo de iOS Safari
+                (que se puede desbordar del cuadro) nunca queda visible. */}
+            <div className="relative min-w-0 overflow-hidden rounded-control border border-line bg-bg transition-colors focus-within:border-accent">
+              <div className="pointer-events-none flex items-center justify-between px-4 py-3 text-base text-ink">
+                <span>{formatFechaLarga(fecha)}</span>
+                <CalendarBlank size={20} className="shrink-0 text-ink-faint" />
+              </div>
+              <input
+                id="fecha"
+                type="date"
+                value={fecha}
+                max={hoyISO()}
+                onChange={(e) => setFecha(e.target.value)}
+                aria-label="Fecha del servicio"
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              />
+            </div>
           </div>
 
           <div className="min-w-0">

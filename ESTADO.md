@@ -19,7 +19,7 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 ## Método de autenticación (definido Sesión 1)
 - Cuenta individual por persona (usuario + contraseña), NO Google OAuth ni passkeys (no aplica a este alcance)
 - Contraseñas: hash SHA-256 + salt por usuario (`Utilities.computeDigest`), nunca en texto plano
-- Sesión: token aleatorio guardado en la pestaña `Sesiones` con expiración de 12 horas, enviado en el body/querystring (NUNCA en header `Authorization`, para evitar preflight CORS que Apps Script no maneja bien)
+- Sesión: token aleatorio guardado en la pestaña `Sesiones` con expiración de 45 días (`SESION_HORAS_VALIDEZ`), enviado en el body/querystring (NUNCA en header `Authorization`, para evitar preflight CORS que Apps Script no maneja bien)
 - Roles: `admin` (gestiona usuarios y tipos de servicio) y `empleado` (solo registra servicios)
 - Usuario admin sembrado por `setup()`: usuario `admin` / contraseña `cambiar123` — DEBE cambiarse (endpoint `cambiarPassword` ya existe en el backend)
 
@@ -38,6 +38,11 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 - Tipografía: Display "Instrument Serif" | Cuerpo "Work Sans"
 - Radio de bordes: 20px cards (`--radius-card`), 14px controles (`--radius-control`)
 - Personalidad: cercana · confiable · sin vueltas
+
+## Ajustes post-lanzamiento (a pedido del usuario, tras probar en Safari/iPhone)
+- Sesión: extendida de 12h a 45 días
+- Dashboard: la card principal ya NO es "total histórico" — ahora es "Total del mes" (`totalMes`), calculado sobre el mes del día que se está viendo con las flechas ← → (mismo parámetro `fecha` que ya existía). Campo del backend renombrado de `totalAcumulado` a `totalMes` + nuevo campo `mes`.
+- Corregido overflow en Safari iPhone: el campo de fecha (`input type="date"`) y los interruptores de Ajustes se salían de su caja — causa: faltaba `min-w-0` en los contenedores flex (causa #1 de este tipo de bug, ver `43-MICRO-CRAFT-Y-EJECUCION.md`) y el interruptor tenía su pista visual (48px) más ancha que su botón contenedor (44px). Ambos corregidos y verificados en la app publicada.
 
 ## Sesiones completadas ✅
 - Sesión 1 — Backend Apps Script completo (auth, servicios, tipos, usuarios, dashboard, cambio de contraseña) + pantalla de Login con diseño aplicado + Google Sheet real desplegada por el usuario ("CajaBella_Datos") + Apps Script publicado como Web App. Login probado de punta a punta contra el backend real. — 2026-07-14
