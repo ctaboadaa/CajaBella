@@ -18,8 +18,8 @@ export function Toggle({ activo, onChange, label, disabled }: ToggleProps) {
     >
       <span className={`relative h-7 w-12 rounded-full transition-colors ${activo ? 'bg-success' : 'bg-surface-sunken'}`}>
         <span
-          className="absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform"
-          style={{ transform: activo ? 'translateX(22px)' : 'translateX(4px)' }}
+          className="absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow transition-transform"
+          style={{ transform: activo ? 'translateX(20px)' : 'translateX(0)' }}
         />
       </span>
     </button>
