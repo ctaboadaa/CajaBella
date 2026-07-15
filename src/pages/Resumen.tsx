@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { CaretLeft, CaretRight, Sparkle, TrendUp } from '@phosphor-icons/react';
+import { CalendarBlank, CaretLeft, CaretRight, Sparkle, TrendUp } from '@phosphor-icons/react';
 import { useAuth } from '../auth/AuthContext';
 import { api } from '../api/client';
 import type { DashboardData } from '../api/types';
@@ -85,7 +85,18 @@ export function Resumen() {
                 >
                   <CaretLeft size={16} />
                 </button>
-                <span className="text-sm font-medium text-ink">{esHoy ? 'Hoy' : formatFechaCorta(fecha)}</span>
+                <div className="relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-ink transition-colors active:bg-surface-elevated">
+                  <CalendarBlank size={14} className="text-ink-faint" />
+                  <span>{esHoy ? 'Hoy' : formatFechaCorta(fecha)}</span>
+                  <input
+                    type="date"
+                    value={fecha}
+                    max={hoyISO()}
+                    onChange={(e) => setFecha(e.target.value)}
+                    aria-label="Elegir el día que quieres ver"
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                  />
+                </div>
                 <button
                   aria-label="Día siguiente"
                   onClick={() => setFecha((f) => sumarDias(f, 1))}
