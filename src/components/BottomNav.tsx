@@ -1,9 +1,10 @@
 import { NavLink } from 'react-router-dom';
-import { ChartBar, Gear, PlusCircle } from '@phosphor-icons/react';
+import { ChartBar, ClipboardText, Gear, PlusCircle } from '@phosphor-icons/react';
 
 const items = [
   { to: '/registrar', label: 'Registrar', Icon: PlusCircle },
   { to: '/resumen', label: 'Resumen', Icon: ChartBar },
+  { to: '/historial', label: 'Historial', Icon: ClipboardText },
   { to: '/ajustes', label: 'Ajustes', Icon: Gear },
 ];
 

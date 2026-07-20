@@ -42,7 +42,17 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 ## Ajustes post-lanzamiento (a pedido del usuario, tras probar en Safari/iPhone)
 - Sesión: extendida de 12h a 45 días
 - Dashboard: la card principal ya NO es "total histórico" — ahora es "Total del mes" (`totalMes`), calculado sobre el mes del día que se está viendo con las flechas ← → (mismo parámetro `fecha` que ya existía). Campo del backend renombrado de `totalAcumulado` a `totalMes` + nuevo campo `mes`.
-- Corregido overflow en Safari iPhone: el campo de fecha (`input type="date"`) y los interruptores de Ajustes se salían de su caja — causa: faltaba `min-w-0` en los contenedores flex (causa #1 de este tipo de bug, ver `43-MICRO-CRAFT-Y-EJECUCION.md`) y el interruptor tenía su pista visual (48px) más ancha que su botón contenedor (44px). Ambos corregidos y verificados en la app publicada.
+- Resumen: además de las flechas ← →, ahora se puede tocar "Hoy"/la fecha para abrir el calendario nativo y saltar directo a cualquier día (mismo patrón de input invisible que el campo de fecha de Registrar).
+- Campo de fecha de "Registrar servicio": rediseñado para que NUNCA se muestre el control nativo (que en iOS Safari se desbordaba de su caja pese a los intentos de arreglarlo con CSS) — ahora se ve texto propio ("15 de julio de 2026" + ícono de calendario) con el input real invisible encima solo para abrir el picker. Mismo patrón aplicado al selector de fecha de Resumen.
+- 🐛 Corregido bug real (no solo de Safari) en `Toggle.tsx`: el círculo del interruptor no tenía una posición `left` explícita, así que el navegador la resolvía a 24px en vez de 0 — en estado activado el círculo se salía ~18px del track hacia la derecha, en TODOS los navegadores (PC, iOS, Android). Se corrigió con `left-1` explícito + `translateX(0 / 20px)`. Verificado con medición exacta de píxeles: el círculo ahora queda dentro del track con el mismo margen (4px) en ambos estados.
+
+## Feature: Historial (editar/borrar servicios registrados) — a pedido del usuario
+- Nueva pantalla `/historial` (agregada a la navegación inferior, 4to ítem) con su propio selector de fecha (mismo componente `SelectorDeFecha` extraído y reusado en Resumen) — lista los servicios de un día, con total y cantidad arriba.
+- Cada servicio se puede **editar** (fecha, tipo, monto, cliente/teléfono, en un formulario inline) o **borrar** (con confirmación explícita "¿Borrar? No se puede deshacer").
+- Regla de permisos: solo quien registró el servicio, o un admin, puede editarlo/borrarlo (verificado en el backend, no solo escondido en la UI).
+- Desde Resumen hay un botón "Ver detalle de este día" que lleva directo al Historial de esa fecha.
+- Backend: `actualizarServicio` y `eliminarServicio` (acciones nuevas en `Code.gs`) + `listarServicios_` ahora incluye `tipoNombre` y `usuarioNombre` resueltos server-side (antes solo mandaba los IDs).
+- ⚠️ Pendiente que el usuario redespliegue `Code.gs` — probado el flujo de error (backend viejo devuelve "Acción no reconocida" sin dañar datos) pero falta la verificación end-to-end con el backend actualizado.
 
 ## Sesiones completadas ✅
 - Sesión 1 — Backend Apps Script completo (auth, servicios, tipos, usuarios, dashboard, cambio de contraseña) + pantalla de Login con diseño aplicado + Google Sheet real desplegada por el usuario ("CajaBella_Datos") + Apps Script publicado como Web App. Login probado de punta a punta contra el backend real. — 2026-07-14

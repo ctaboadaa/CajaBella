@@ -5,6 +5,7 @@ import { BottomNav } from './components/BottomNav';
 import { Login } from './pages/Login';
 import { RegistrarServicio } from './pages/RegistrarServicio';
 import { Resumen } from './pages/Resumen';
+import { Historial } from './pages/Historial';
 import { Ajustes } from './pages/Ajustes';
 
 function AppAutenticada() {
@@ -14,6 +15,7 @@ function AppAutenticada() {
         <Routes>
           <Route path="/registrar" element={<RegistrarServicio />} />
           <Route path="/resumen" element={<Resumen />} />
+          <Route path="/historial" element={<Historial />} />
           <Route path="/ajustes" element={<Ajustes />} />
           <Route path="*" element={<Navigate to="/registrar" replace />} />
         </Routes>

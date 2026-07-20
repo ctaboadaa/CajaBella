@@ -18,10 +18,12 @@ export interface Servicio {
   id: string;
   fecha: string;
   tipoServicioId: string;
+  tipoNombre: string;
   monto: number;
   clienteNombre: string;
   clienteTelefono: string;
   usuarioId: string;
+  usuarioNombre: string;
   creadoEn: string;
 }
 

@@ -81,6 +81,8 @@ function doPost(e) {
 
     if (action === 'login') return json_(login_(body.usuario, body.password));
     if (action === 'crearServicio') return json_(crearServicio_(requireAuth_(body.token), body));
+    if (action === 'actualizarServicio') return json_(actualizarServicio_(requireAuth_(body.token), body));
+    if (action === 'eliminarServicio') return json_(eliminarServicio_(requireAuth_(body.token), body));
     if (action === 'crearTipoServicio') return json_(crearTipo_(requireAdmin_(body.token), body.nombre));
     if (action === 'actualizarTipoServicio') return json_(actualizarTipo_(requireAdmin_(body.token), body));
     if (action === 'crearUsuario') return json_(crearUsuario_(requireAdmin_(body.token), body));
@@ -181,7 +183,58 @@ function listarServicios_(usuarioAutenticado, desde, hasta) {
   if (desde) filas = filas.filter(function (f) { return f.fecha >= desde; });
   if (hasta) filas = filas.filter(function (f) { return f.fecha <= hasta; });
   filas.sort(function (a, b) { return b.fecha.localeCompare(a.fecha) || b.creadoEn.localeCompare(a.creadoEn); });
-  return { ok: true, servicios: filas };
+
+  var nombrePorTipoId = {};
+  obtenerFilas_(SHEET_TIPOS).forEach(function (t) { nombrePorTipoId[t.id] = t.nombre; });
+  var nombrePorUsuarioId = {};
+  obtenerFilas_(SHEET_USUARIOS).forEach(function (u) { nombrePorUsuarioId[u.id] = u.nombre; });
+
+  var conNombres = filas.map(function (f) {
+    return {
+      id: f.id,
+      fecha: f.fecha,
+      tipoServicioId: f.tipoServicioId,
+      tipoNombre: nombrePorTipoId[f.tipoServicioId] || 'Otro',
+      monto: f.monto,
+      clienteNombre: f.clienteNombre,
+      clienteTelefono: f.clienteTelefono,
+      usuarioId: f.usuarioId,
+      usuarioNombre: nombrePorUsuarioId[f.usuarioId] || '—',
+      creadoEn: f.creadoEn,
+    };
+  });
+
+  return { ok: true, servicios: conNombres };
+}
+
+function actualizarServicio_(usuarioAutenticado, body) {
+  var hoja = getSheet_(SHEET_SERVICIOS);
+  var fila = ubicarFila_(hoja, 'id', body.id);
+  if (!fila) return { ok: false, error: 'No se encontró el servicio' };
+  if (fila.usuarioId !== usuarioAutenticado.id && usuarioAutenticado.rol !== 'admin') {
+    return { ok: false, error: 'Solo quien registró este servicio (o un administrador) puede editarlo' };
+  }
+  if (typeof body.fecha === 'string' && body.fecha) hoja.getRange(fila.rowIndex, 2).setValue(body.fecha);
+  if (typeof body.tipoServicioId === 'string' && body.tipoServicioId) hoja.getRange(fila.rowIndex, 3).setValue(body.tipoServicioId);
+  if (body.monto !== undefined) {
+    var monto = Number(body.monto);
+    if (!monto || monto <= 0) return { ok: false, error: 'El monto no es válido' };
+    hoja.getRange(fila.rowIndex, 4).setValue(monto);
+  }
+  if (typeof body.clienteNombre === 'string') hoja.getRange(fila.rowIndex, 5).setValue(body.clienteNombre);
+  if (typeof body.clienteTelefono === 'string') hoja.getRange(fila.rowIndex, 6).setValue(body.clienteTelefono);
+  return { ok: true };
+}
+
+function eliminarServicio_(usuarioAutenticado, body) {
+  var hoja = getSheet_(SHEET_SERVICIOS);
+  var fila = ubicarFila_(hoja, 'id', body.id);
+  if (!fila) return { ok: false, error: 'No se encontró el servicio' };
+  if (fila.usuarioId !== usuarioAutenticado.id && usuarioAutenticado.rol !== 'admin') {
+    return { ok: false, error: 'Solo quien registró este servicio (o un administrador) puede borrarlo' };
+  }
+  hoja.deleteRow(fila.rowIndex);
+  return { ok: true };
 }
 
 // ---------------------------------------------------------------------------
