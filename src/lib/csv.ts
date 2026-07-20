@@ -1,8 +1,12 @@
 import type { Servicio } from '../api/types';
 
 function celda(valor: string): string {
-  if (/[",\n]/.test(valor)) return '"' + valor.replace(/"/g, '""') + '"';
-  return valor;
+  // Los nombres de cliente los escribe cualquier empleado — si alguien escribe algo que
+  // empieza con = + - @ (sin querer o no), Excel/Sheets podría intentar leerlo como una
+  // fórmula al abrir el archivo. Se antepone una comilla para que quede como texto plano.
+  let v = /^[=+\-@]/.test(valor) ? "'" + valor : valor;
+  if (/[",\n]/.test(v)) v = '"' + v.replace(/"/g, '""') + '"';
+  return v;
 }
 
 export function serviciosACSV(servicios: Servicio[]): string {

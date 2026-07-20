@@ -78,7 +78,7 @@ function doGet(e) {
     if (action === 'tiposServicio') return json_(listarTipos_(requireAuth_(e.parameter.token)));
     if (action === 'tiposServicioTodos') return json_(listarTiposTodos_(requireAdmin_(e.parameter.token)));
     if (action === 'dashboard') return json_(dashboard_(requireAuth_(e.parameter.token), e.parameter.fecha));
-    if (action === 'usuarios') return json_(listarUsuarios_(requireAuth_(e.parameter.token)));
+    if (action === 'usuarios') return json_(listarUsuarios_(requireAdmin_(e.parameter.token)));
     if (action === 'yo') return json_({ ok: true, usuario: sinDatosSensibles_(requireAuth_(e.parameter.token)) });
     return json_({ ok: false, error: 'Acción no reconocida' });
   } catch (err) {
@@ -121,10 +121,28 @@ function hashPassword_(password, salt) {
 
 function login_(usuario, password) {
   if (!usuario || !password) return { ok: false, error: 'Usuario o contraseña incorrectos' };
+
+  // Límite de intentos: máximo 8 intentos fallidos por usuario cada 15 minutos, para
+  // dificultar que alguien adivine una contraseña a fuerza bruta.
+  var cache = CacheService.getScriptCache();
+  var claveIntentos = 'intentos_login_' + usuario;
+  var intentos = Number(cache.get(claveIntentos)) || 0;
+  if (intentos >= 8) {
+    return { ok: false, error: 'Demasiados intentos fallidos. Espera 15 minutos e intenta de nuevo.' };
+  }
+
   var fila = buscarFila_(SHEET_USUARIOS, 'usuario', usuario);
-  if (!fila || fila.activo === false) return { ok: false, error: 'Usuario o contraseña incorrectos' };
-  var hash = hashPassword_(password, fila.salt);
-  if (hash !== fila.passwordHash) return { ok: false, error: 'Usuario o contraseña incorrectos' };
+  // Se calcula el hash SIEMPRE (con una sal fija si el usuario no existe) para que un
+  // usuario inexistente no responda notablemente más rápido que uno real — evita que el
+  // tiempo de respuesta delate qué nombres de usuario existen.
+  var hash = hashPassword_(password, fila ? fila.salt : 'sal-constante-usuario-inexistente');
+  var esValido = fila && fila.activo !== false && hash === fila.passwordHash;
+
+  if (!esValido) {
+    cache.put(claveIntentos, String(intentos + 1), 900);
+    return { ok: false, error: 'Usuario o contraseña incorrectos' };
+  }
+  cache.remove(claveIntentos);
 
   var token = Utilities.getUuid();
   var ahora = new Date();

@@ -66,6 +66,20 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 - Backend: nueva columna `montoSugerido` en la hoja `TiposDeServicio`, agregada automáticamente la próxima vez que se corra `setup()` (migración segura, no toca datos existentes) vía `agregarColumnaSiFalta_`.
 - ⚠️ Mientras el usuario no redespliegue `Code.gs`, el ranking por empleado simplemente no aparece (protegido con `?? []`, no rompe la pantalla) y el precio sugerido no se guarda todavía.
 
+## Revisión de seguridad — 2026-07-20
+Siguiendo `27-REVISION-SEGURIDAD.md` (`npm audit`, grep de defaults inseguros, revisión manual de las 5 checklists — semgrep no estaba disponible en este entorno, se compensó con revisión manual más exhaustiva).
+
+**Threat model corto:** lo más valioso es la lista de servicios/montos (ingresos del salón) y las cuentas del personal. El riesgo más realista no es un atacante externo sofisticado, sino: (a) alguien adivinando la contraseña de un usuario por fuerza bruta, (b) un empleado viendo/editando datos de otra persona, (c) un nombre de cliente con caracteres raros rompiendo el CSV al abrirlo en Excel.
+
+**Corregido:**
+- 🔒 **Inyección de fórmulas en el CSV**: si un nombre de cliente empezaba con `= + - @`, Excel podía intentar interpretarlo como fórmula al abrir el archivo exportado. Se neutraliza anteponiendo una comilla (`lib/csv.ts`).
+- 🔒 **`listarUsuarios_` sin restricción**: cualquier empleado autenticado podía pedir la lista completa de usuarios (nombres y logins de todo el personal), no solo el admin. Ahora requiere admin (`requireAdmin_`).
+- 🔒 **Sin límite de intentos de login**: no había nada que impidiera probar contraseñas repetidamente. Se agregó un límite de 8 intentos fallidos por usuario cada 15 minutos (`CacheService`), y de paso se pareja el tiempo de respuesta entre "usuario no existe" y "contraseña incorrecta" (antes el primero respondía más rápido, lo cual podía revelar qué usuarios existen).
+
+**Verificado sin hallazgos:** `npm audit` en 0 vulnerabilidades · sin secretos filtrados en git (`.env` solo tiene la URL pública del Apps Script, no es secreta) · sin `dangerouslySetInnerHTML`/`eval` · permisos de editar/borrar servicios ya verificados en el servidor (no solo escondidos en la pantalla) · errores fail-secure (deniegan por defecto si falta token/permiso).
+
+**Aceptado como limitación conocida (no corregido):** las contraseñas se guardan con SHA-256 + sal de una sola pasada (Apps Script no tiene bcrypt/Argon2 nativo). Subirle un factor de trabajo (miles de iteraciones) habría invalidado TODAS las contraseñas ya guardadas (admin y Nataly Pinedo quedarían bloqueadas), así que no se tocó sin tu aprobación explícita. Mitigante real: la hoja de cálculo solo es accesible desde tu propia cuenta de Google — para que alguien vea esos hashes, primero tendría que entrar a tu Google Drive, momento en el cual ya tendría problemas mayores. Si más adelante quieres subir esto de nivel, se puede migrar en un paso aparte (cada quien re-loguea una vez).
+
 ## Sesiones completadas ✅
 - Sesión 1 — Backend Apps Script completo (auth, servicios, tipos, usuarios, dashboard, cambio de contraseña) + pantalla de Login con diseño aplicado + Google Sheet real desplegada por el usuario ("CajaBella_Datos") + Apps Script publicado como Web App. Login probado de punta a punta contra el backend real. — 2026-07-14
 - Sesión 2 — Pantalla "Registrar servicio" + pantalla "Resumen" (dashboard) + navegación inferior. Registré un servicio real (Manicure, S/35, cliente "Rosa Pérez") y se reflejó correctamente. — 2026-07-14
