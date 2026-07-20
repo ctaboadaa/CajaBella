@@ -52,7 +52,12 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 - Regla de permisos: solo quien registró el servicio, o un admin, puede editarlo/borrarlo (verificado en el backend, no solo escondido en la UI).
 - Desde Resumen hay un botón "Ver detalle de este día" que lleva directo al Historial de esa fecha.
 - Backend: `actualizarServicio` y `eliminarServicio` (acciones nuevas en `Code.gs`) + `listarServicios_` ahora incluye `tipoNombre` y `usuarioNombre` resueltos server-side (antes solo mandaba los IDs).
-- ⚠️ Pendiente que el usuario redespliegue `Code.gs` — probado el flujo de error (backend viejo devuelve "Acción no reconocida" sin dañar datos) pero falta la verificación end-to-end con el backend actualizado.
+- Verificado end-to-end contra el Sheet real: creé un servicio de prueba, lo edité, lo borré, y confirmé por API que los registros reales del usuario (Margoth Coope, etc.) no se tocaron.
+
+## Feature: Exportar a Excel/CSV — a pedido del usuario
+- Botón "Exportar a Excel/CSV" en Historial, con selector de rango de fechas (Desde/Hasta, mismo componente `CampoFecha` reusable). Por defecto: desde el 1 del mes que se está viendo hasta hoy.
+- Genera un CSV (Fecha, Tipo de servicio, Monto (S/), Cliente, Teléfono, Registrado por) ordenado cronológicamente, con BOM UTF-8 (para que Excel muestre bien los acentos) y descarga directa — no necesitó cambios de backend, reusa el endpoint `servicios` que ya existía.
+- Verificado: contenido del CSV inspeccionado directamente (capturando el Blob) contra datos reales — encabezados y filas correctos.
 
 ## Sesiones completadas ✅
 - Sesión 1 — Backend Apps Script completo (auth, servicios, tipos, usuarios, dashboard, cambio de contraseña) + pantalla de Login con diseño aplicado + Google Sheet real desplegada por el usuario ("CajaBella_Datos") + Apps Script publicado como Web App. Login probado de punta a punta contra el backend real. — 2026-07-14

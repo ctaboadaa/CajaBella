@@ -6,6 +6,7 @@ import { api } from '../api/client';
 import type { Servicio, TipoServicio } from '../api/types';
 import { SelectorDeFecha } from '../components/SelectorDeFecha';
 import { ServicioItem } from '../components/ServicioItem';
+import { ExportarCSV } from '../components/ExportarCSV';
 import { formatMonto, hoyISO } from '../lib/format';
 
 type Estado = { tipo: 'cargando' } | { tipo: 'error'; mensaje: string } | { tipo: 'listo' };
@@ -49,6 +50,8 @@ export function Historial() {
         <div className="mb-4 rounded-card border border-line bg-surface p-4">
           <SelectorDeFecha fecha={fecha} onCambiarFecha={onCambiarFecha} />
         </div>
+
+        <ExportarCSV fechaReferencia={fecha} />
 
         {estado.tipo === 'error' && (
           <div className="rounded-card border border-line bg-error-soft p-5 text-center text-sm text-error">{estado.mensaje}</div>
