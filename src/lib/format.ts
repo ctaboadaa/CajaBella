@@ -2,6 +2,7 @@ const moneda = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PE
 const fechaCorta = new Intl.DateTimeFormat('es-PE', { weekday: 'short', day: 'numeric', month: 'short' });
 const mesLargo = new Intl.DateTimeFormat('es-PE', { month: 'long', year: 'numeric' });
 const fechaLarga = new Intl.DateTimeFormat('es-PE', { day: 'numeric', month: 'long', year: 'numeric' });
+const diaSemanaCorta = new Intl.DateTimeFormat('es-PE', { weekday: 'short' });
 
 export function formatMonto(valor: number): string {
   return moneda.format(valor);
@@ -23,6 +24,12 @@ export function formatFechaLarga(iso: string): string {
   const [y, m, d] = iso.split('-').map(Number);
   const texto = fechaLarga.format(new Date(y, m - 1, d));
   return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+export function formatDiaSemanaCorta(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  const texto = diaSemanaCorta.format(new Date(y, m - 1, d));
+  return texto.charAt(0).toUpperCase() + texto.slice(1).replace('.', '');
 }
 
 export function formatMesLargo(mesISO: string): string {

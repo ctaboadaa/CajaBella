@@ -18,8 +18,9 @@ function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   crearHojaSiNoExiste_(ss, SHEET_USUARIOS, ['id', 'nombre', 'usuario', 'passwordHash', 'salt', 'rol', 'activo', 'creadoEn']);
   crearHojaSiNoExiste_(ss, SHEET_SERVICIOS, ['id', 'fecha', 'tipoServicioId', 'monto', 'clienteNombre', 'clienteTelefono', 'usuarioId', 'creadoEn']);
-  crearHojaSiNoExiste_(ss, SHEET_TIPOS, ['id', 'nombre', 'activo']);
+  crearHojaSiNoExiste_(ss, SHEET_TIPOS, ['id', 'nombre', 'activo', 'montoSugerido']);
   crearHojaSiNoExiste_(ss, SHEET_SESIONES, ['token', 'usuarioId', 'creadoEn', 'expiraEn']);
+  agregarColumnaSiFalta_(getSheet_(SHEET_TIPOS), 'montoSugerido');
 
   var usuarios = getSheet_(SHEET_USUARIOS);
   if (usuarios.getLastRow() < 2) {
@@ -56,6 +57,17 @@ function crearHojaSiNoExiste_(ss, nombre, headers) {
   return hoja;
 }
 
+// Migración suave: si una hoja ya existía de antes de agregar una columna nueva al
+// sistema, esto la agrega sin tocar los datos existentes. Se corre cada vez que se
+// ejecuta setup(), así que es seguro volver a correr setup() cuando sea.
+function agregarColumnaSiFalta_(hoja, nombreColumna) {
+  var ultimaColumna = Math.max(hoja.getLastColumn(), 1);
+  var headers = hoja.getRange(1, 1, 1, ultimaColumna).getValues()[0];
+  if (headers.indexOf(nombreColumna) === -1) {
+    hoja.getRange(1, ultimaColumna + 1).setValue(nombreColumna);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // ENTRADAS HTTP
 // ---------------------------------------------------------------------------
@@ -83,7 +95,7 @@ function doPost(e) {
     if (action === 'crearServicio') return json_(crearServicio_(requireAuth_(body.token), body));
     if (action === 'actualizarServicio') return json_(actualizarServicio_(requireAuth_(body.token), body));
     if (action === 'eliminarServicio') return json_(eliminarServicio_(requireAuth_(body.token), body));
-    if (action === 'crearTipoServicio') return json_(crearTipo_(requireAdmin_(body.token), body.nombre));
+    if (action === 'crearTipoServicio') return json_(crearTipo_(requireAdmin_(body.token), body));
     if (action === 'actualizarTipoServicio') return json_(actualizarTipo_(requireAdmin_(body.token), body));
     if (action === 'crearUsuario') return json_(crearUsuario_(requireAdmin_(body.token), body));
     if (action === 'actualizarUsuario') return json_(actualizarUsuario_(requireAdmin_(body.token), body));
@@ -240,11 +252,13 @@ function eliminarServicio_(usuarioAutenticado, body) {
 // ---------------------------------------------------------------------------
 // TIPOS DE SERVICIO
 // ---------------------------------------------------------------------------
-function crearTipo_(usuarioAdmin, nombre) {
+function crearTipo_(usuarioAdmin, body) {
+  var nombre = body.nombre;
   if (!nombre || !nombre.trim()) return { ok: false, error: 'El nombre no puede estar vacío' };
   var id = Utilities.getUuid();
-  getSheet_(SHEET_TIPOS).appendRow([id, nombre.trim(), true]);
-  return { ok: true, tipo: { id: id, nombre: nombre.trim(), activo: true } };
+  var montoSugerido = Number(body.montoSugerido) || '';
+  getSheet_(SHEET_TIPOS).appendRow([id, nombre.trim(), true, montoSugerido]);
+  return { ok: true, tipo: { id: id, nombre: nombre.trim(), activo: true, montoSugerido: montoSugerido } };
 }
 
 function actualizarTipo_(usuarioAdmin, body) {
@@ -253,6 +267,10 @@ function actualizarTipo_(usuarioAdmin, body) {
   if (!fila) return { ok: false, error: 'No se encontró el tipo de servicio' };
   if (typeof body.nombre === 'string' && body.nombre.trim()) hoja.getRange(fila.rowIndex, 2).setValue(body.nombre.trim());
   if (typeof body.activo === 'boolean') hoja.getRange(fila.rowIndex, 3).setValue(body.activo);
+  if (body.montoSugerido !== undefined) {
+    var montoSugerido = Number(body.montoSugerido);
+    hoja.getRange(fila.rowIndex, 4).setValue(montoSugerido > 0 ? montoSugerido : '');
+  }
   return { ok: true };
 }
 
@@ -318,19 +336,29 @@ function dashboard_(usuarioAutenticado, fecha) {
   var tipos = obtenerFilas_(SHEET_TIPOS);
   var nombrePorTipoId = {};
   tipos.forEach(function (t) { nombrePorTipoId[t.id] = t.nombre; });
+  var nombrePorUsuarioId = {};
+  obtenerFilas_(SHEET_USUARIOS).forEach(function (u) { nombrePorUsuarioId[u.id] = u.nombre; });
 
   var totalMes = 0;
   var totalDia = 0;
   var cantidadDia = 0;
   var conteoPorTipo = {};
+  var montoPorUsuario = {};
+  var cantidadPorUsuario = {};
 
   servicios.forEach(function (s) {
-    if (s.fecha.substring(0, 7) === mes) totalMes += Number(s.monto) || 0;
+    var monto = Number(s.monto) || 0;
+    var esDelMes = s.fecha.substring(0, 7) === mes;
+    if (esDelMes) totalMes += monto;
     if (s.fecha === hoy) {
-      totalDia += Number(s.monto) || 0;
+      totalDia += monto;
       cantidadDia += 1;
     }
     conteoPorTipo[s.tipoServicioId] = (conteoPorTipo[s.tipoServicioId] || 0) + 1;
+    if (esDelMes) {
+      montoPorUsuario[s.usuarioId] = (montoPorUsuario[s.usuarioId] || 0) + monto;
+      cantidadPorUsuario[s.usuarioId] = (cantidadPorUsuario[s.usuarioId] || 0) + 1;
+    }
   });
 
   var topServicios = Object.keys(conteoPorTipo)
@@ -338,7 +366,20 @@ function dashboard_(usuarioAutenticado, fecha) {
     .sort(function (a, b) { return b.cantidad - a.cantidad; })
     .slice(0, 2);
 
-  return { ok: true, fecha: hoy, mes: mes, totalMes: totalMes, totalDia: totalDia, cantidadDia: cantidadDia, topServicios: topServicios };
+  var porEmpleado = Object.keys(montoPorUsuario)
+    .map(function (uid) { return { usuarioNombre: nombrePorUsuarioId[uid] || '—', total: montoPorUsuario[uid], cantidad: cantidadPorUsuario[uid] }; })
+    .sort(function (a, b) { return b.total - a.total; });
+
+  return {
+    ok: true,
+    fecha: hoy,
+    mes: mes,
+    totalMes: totalMes,
+    totalDia: totalDia,
+    cantidadDia: cantidadDia,
+    topServicios: topServicios,
+    porEmpleado: porEmpleado,
+  };
 }
 
 // ---------------------------------------------------------------------------

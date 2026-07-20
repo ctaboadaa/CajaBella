@@ -35,6 +35,16 @@ export function RegistrarServicio() {
 
   useEffect(cargarTipos, [token]);
 
+  // Autocompleta el monto con el precio sugerido del tipo elegido, pero solo si el
+  // campo está vacío — nunca pisa un monto que la persona ya haya escrito a mano.
+  useEffect(() => {
+    if (tipos.tipo !== 'listo' || monto !== '') return;
+    const seleccionado = tipos.opciones.find((t) => t.id === tipoServicioId);
+    const sugerido = Number(seleccionado?.montoSugerido) || 0;
+    if (sugerido > 0) setMonto(String(sugerido));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tipoServicioId, tipos]);
+
   const montoNumero = Number(monto);
   const puedeEnviar = !!fecha && !!tipoServicioId && montoNumero > 0 && !enviando;
 

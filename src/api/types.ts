@@ -12,6 +12,7 @@ export interface TipoServicio {
   id: string;
   nombre: string;
   activo: boolean;
+  montoSugerido?: number | string;
 }
 
 export interface Servicio {
@@ -34,6 +35,7 @@ export interface DashboardData {
   totalDia: number;
   cantidadDia: number;
   topServicios: { nombre: string; cantidad: number }[];
+  porEmpleado: { usuarioNombre: string; total: number; cantidad: number }[];
 }
 
 export interface ApiOk<T> {

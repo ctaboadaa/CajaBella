@@ -59,6 +59,13 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 - Genera un CSV (Fecha, Tipo de servicio, Monto (S/), Cliente, Teléfono, Registrado por) ordenado cronológicamente, con BOM UTF-8 (para que Excel muestre bien los acentos) y descarga directa — no necesitó cambios de backend, reusa el endpoint `servicios` que ya existía.
 - Verificado: contenido del CSV inspeccionado directamente (capturando el Blob) contra datos reales — encabezados y filas correctos.
 
+## Feature: tendencia semanal, ranking por empleado y precio sugerido — a pedido del usuario
+- **Tendencia**: card nueva en Resumen con barras de los últimos 7 días (hoy resaltado en acento), calculada del lado del cliente reusando el endpoint `servicios` (sin cambios de backend).
+- **Ranking por empleado**: card nueva en Resumen (**solo visible para admin**, y solo si hay 2+ personas con servicios ese mes) con el total facturado por cada quien. Backend: `dashboard_` ahora también devuelve `porEmpleado`.
+- **Precio sugerido por tipo**: en Ajustes, cada tipo de servicio puede tener un precio sugerido (ícono de lápiz para editarlo). En "Registrar servicio", el monto se autocompleta con ese precio al elegir el tipo (solo si el campo estaba vacío — nunca pisa un monto ya escrito a mano).
+- Backend: nueva columna `montoSugerido` en la hoja `TiposDeServicio`, agregada automáticamente la próxima vez que se corra `setup()` (migración segura, no toca datos existentes) vía `agregarColumnaSiFalta_`.
+- ⚠️ Mientras el usuario no redespliegue `Code.gs`, el ranking por empleado simplemente no aparece (protegido con `?? []`, no rompe la pantalla) y el precio sugerido no se guarda todavía.
+
 ## Sesiones completadas ✅
 - Sesión 1 — Backend Apps Script completo (auth, servicios, tipos, usuarios, dashboard, cambio de contraseña) + pantalla de Login con diseño aplicado + Google Sheet real desplegada por el usuario ("CajaBella_Datos") + Apps Script publicado como Web App. Login probado de punta a punta contra el backend real. — 2026-07-14
 - Sesión 2 — Pantalla "Registrar servicio" + pantalla "Resumen" (dashboard) + navegación inferior. Registré un servicio real (Manicure, S/35, cliente "Rosa Pérez") y se reflejó correctamente. — 2026-07-14

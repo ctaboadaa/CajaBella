@@ -7,6 +7,8 @@ import { api } from '../api/client';
 import type { DashboardData } from '../api/types';
 import { useCountUp } from '../hooks/useCountUp';
 import { SelectorDeFecha } from '../components/SelectorDeFecha';
+import { TendenciaSemana } from '../components/TendenciaSemana';
+import { RankingEmpleados } from '../components/RankingEmpleados';
 import { formatMonto, formatMesLargo, hoyISO } from '../lib/format';
 
 type Estado =
@@ -15,7 +17,7 @@ type Estado =
   | { tipo: 'listo'; datos: DashboardData };
 
 export function Resumen() {
-  const { token } = useAuth();
+  const { token, usuario } = useAuth();
   const [fecha, setFecha] = useState(hoyISO());
   const [estado, setEstado] = useState<Estado>({ tipo: 'cargando' });
 
@@ -116,6 +118,8 @@ export function Resumen() {
               </Link>
             </motion.div>
 
+            <TendenciaSemana />
+
             {/* Top servicios */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -174,6 +178,8 @@ export function Resumen() {
                 </ol>
               )}
             </motion.div>
+
+            {usuario?.rol === 'admin' && estado.tipo === 'listo' && <RankingEmpleados porEmpleado={estado.datos.porEmpleado ?? []} />}
           </div>
         )}
       </motion.div>
