@@ -3,6 +3,7 @@ const fechaCorta = new Intl.DateTimeFormat('es-PE', { weekday: 'short', day: 'nu
 const mesLargo = new Intl.DateTimeFormat('es-PE', { month: 'long', year: 'numeric' });
 const fechaLarga = new Intl.DateTimeFormat('es-PE', { day: 'numeric', month: 'long', year: 'numeric' });
 const diaSemanaCorta = new Intl.DateTimeFormat('es-PE', { weekday: 'short' });
+const mesCorto = new Intl.DateTimeFormat('es-PE', { month: 'short' });
 
 export function formatMonto(valor: number): string {
   return moneda.format(valor);
@@ -36,6 +37,19 @@ export function formatMesLargo(mesISO: string): string {
   const [y, m] = mesISO.split('-').map(Number);
   const texto = mesLargo.format(new Date(y, m - 1, 1));
   return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+export function formatMesCorto(mesISO: string): string {
+  const [y, m] = mesISO.split('-').map(Number);
+  const texto = mesCorto.format(new Date(y, m - 1, 1));
+  return texto.charAt(0).toUpperCase() + texto.slice(1).replace('.', '');
+}
+
+// "YYYY-MM" del mes actual menos `n` meses (0 = mes actual, 1 = el anterior, etc.)
+export function mesRelativo(n: number): string {
+  const hoy = new Date();
+  const fecha = new Date(hoy.getFullYear(), hoy.getMonth() - n, 1);
+  return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
 }
 
 export function sumarDias(iso: string, dias: number): string {

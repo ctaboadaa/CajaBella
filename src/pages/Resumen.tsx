@@ -7,7 +7,7 @@ import { api } from '../api/client';
 import type { DashboardData } from '../api/types';
 import { useCountUp } from '../hooks/useCountUp';
 import { SelectorDeFecha } from '../components/SelectorDeFecha';
-import { TendenciaSemana } from '../components/TendenciaSemana';
+import { Tendencia } from '../components/Tendencia';
 import { RankingEmpleados } from '../components/RankingEmpleados';
 import { formatMonto, formatMesLargo, hoyISO } from '../lib/format';
 
@@ -118,7 +118,7 @@ export function Resumen() {
               </Link>
             </motion.div>
 
-            <TendenciaSemana />
+            <Tendencia />
 
             {/* Top servicios */}
             <motion.div

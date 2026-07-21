@@ -60,7 +60,7 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 - Verificado: contenido del CSV inspeccionado directamente (capturando el Blob) contra datos reales — encabezados y filas correctos.
 
 ## Feature: tendencia semanal, ranking por empleado y precio sugerido — a pedido del usuario
-- **Tendencia**: card nueva en Resumen con barras de los últimos 7 días (hoy resaltado en acento), calculada del lado del cliente reusando el endpoint `servicios` (sin cambios de backend).
+- **Tendencia**: card en Resumen con tabs "7 días" / "6 meses" (`components/Tendencia.tsx`, reemplazó a `TendenciaSemana.tsx`), barras con el período actual resaltado en acento, calculada del lado del cliente reusando el endpoint `servicios` (sin cambios de backend). Verificado con datos reales en ambas vistas.
 - **Ranking por empleado**: card nueva en Resumen (**solo visible para admin**, y solo si hay 2+ personas con servicios ese mes) con el total facturado por cada quien. Backend: `dashboard_` ahora también devuelve `porEmpleado`.
 - **Precio sugerido por tipo**: en Ajustes, cada tipo de servicio puede tener un precio sugerido (ícono de lápiz para editarlo). En "Registrar servicio", el monto se autocompleta con ese precio al elegir el tipo (solo si el campo estaba vacío — nunca pisa un monto ya escrito a mano).
 - Backend: nueva columna `montoSugerido` en la hoja `TiposDeServicio`, agregada automáticamente la próxima vez que se corra `setup()` (migración segura, no toca datos existentes) vía `agregarColumnaSiFalta_`.
@@ -79,6 +79,8 @@ Siguiendo `27-REVISION-SEGURIDAD.md` (`npm audit`, grep de defaults inseguros, r
 **Verificado sin hallazgos:** `npm audit` en 0 vulnerabilidades · sin secretos filtrados en git (`.env` solo tiene la URL pública del Apps Script, no es secreta) · sin `dangerouslySetInnerHTML`/`eval` · permisos de editar/borrar servicios ya verificados en el servidor (no solo escondidos en la pantalla) · errores fail-secure (deniegan por defecto si falta token/permiso).
 
 **Aceptado como limitación conocida (no corregido):** las contraseñas se guardan con SHA-256 + sal de una sola pasada (Apps Script no tiene bcrypt/Argon2 nativo). Subirle un factor de trabajo (miles de iteraciones) habría invalidado TODAS las contraseñas ya guardadas (admin y Nataly Pinedo quedarían bloqueadas), así que no se tocó sin tu aprobación explícita. Mitigante real: la hoja de cálculo solo es accesible desde tu propia cuenta de Google — para que alguien vea esos hashes, primero tendría que entrar a tu Google Drive, momento en el cual ya tendría problemas mayores. Si más adelante quieres subir esto de nivel, se puede migrar en un paso aparte (cada quien re-loguea una vez).
+
+**Verificado end-to-end contra el backend real (2026-07-20):** probé el límite de intentos con un usuario inventado — los primeros 8 intentos dieron "Usuario o contraseña incorrectos", el 9no dio el mensaje de bloqueo, exactamente como se diseñó. Probé también que un empleado (cuenta de prueba creada y luego desactivada) recibe "Solo un administrador puede hacer esto" al intentar ver la lista de personal. Ambas correcciones confirmadas funcionando.
 
 ## Sesiones completadas ✅
 - Sesión 1 — Backend Apps Script completo (auth, servicios, tipos, usuarios, dashboard, cambio de contraseña) + pantalla de Login con diseño aplicado + Google Sheet real desplegada por el usuario ("CajaBella_Datos") + Apps Script publicado como Web App. Login probado de punta a punta contra el backend real. — 2026-07-14
