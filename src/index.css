@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@fontsource/instrument-serif";
+@import "@fontsource/young-serif";
 @import "@fontsource/work-sans/400.css";
 @import "@fontsource/work-sans/500.css";
 @import "@fontsource/work-sans/600.css";
@@ -37,7 +37,7 @@
   /* Bordes */
   --color-line: #e8d9d1;
 
-  --font-display: "Instrument Serif", Georgia, serif;
+  --font-display: "Young Serif", Georgia, serif;
   --font-sans: "Work Sans", "Segoe UI", sans-serif;
 
   --radius-card: 20px;

@@ -35,7 +35,7 @@ Herramienta interna (NO se vende) para que el personal de un salón de belleza r
 - Texto: #322022 (principal) / #7A5C60 (secundario)
 - Acento primario: #B5495B (berry/terracota — SOLO en CTA y dato clave)
 - Secundario funcional: #A9825A (dorado — insignias/highlights puntuales)
-- Tipografía: Display "Instrument Serif" | Cuerpo "Work Sans"
+- Tipografía: Display "Young Serif" (cambiada desde Instrument Serif el 2026-07-20 a pedido del usuario — se sentía menos "cercana/cálida") | Cuerpo "Work Sans"
 - Radio de bordes: 20px cards (`--radius-card`), 14px controles (`--radius-control`)
 - Personalidad: cercana · confiable · sin vueltas
 
