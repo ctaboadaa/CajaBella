@@ -3,8 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fbf5f2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#211a19" media="(prefers-color-scheme: dark)" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CajaBella" />
     <title>CajaBella — Control de tu salón</title>
+    <script>
+      // Se corre ANTES de pintar la página para que nunca se vea un flash de modo claro
+      // si la persona ya había elegido oscuro (o su teléfono está en oscuro por defecto).
+      (function () {
+        try {
+          var tema = localStorage.getItem('cajabella_tema') || 'sistema';
+          var prefiereOscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (tema === 'oscuro' || (tema === 'sistema' && prefiereOscuro)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

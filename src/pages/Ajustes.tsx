@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle, LockKey, SignOut } from '@phosphor-icons/react';
 import { useAuth } from '../auth/AuthContext';
 import { FormularioCambiarPassword } from '../components/FormularioCambiarPassword';
+import { SelectorApariencia } from '../components/SelectorApariencia';
 import { GestionTipos } from '../components/GestionTipos';
 import { GestionPersonal } from '../components/GestionPersonal';
 
@@ -21,6 +22,8 @@ export function Ajustes() {
     <div className="min-h-dvh bg-bg px-5 pb-6 pt-8">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mx-auto flex max-w-sm flex-col gap-4">
         <h1 className="text-3xl text-ink">Ajustes</h1>
+
+        <SelectorApariencia />
 
         <div className="rounded-card border border-line bg-surface p-5">
           <p className="text-sm text-ink-soft">Sesión iniciada como</p>

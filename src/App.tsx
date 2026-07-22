@@ -1,5 +1,6 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
+import { ThemeProvider } from './theme/ThemeContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { BottomNav } from './components/BottomNav';
 import { Login } from './pages/Login';
@@ -38,11 +39,13 @@ function Contenido() {
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <HashRouter>
-          <Contenido />
-        </HashRouter>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <HashRouter>
+            <Contenido />
+          </HashRouter>
+        </AuthProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

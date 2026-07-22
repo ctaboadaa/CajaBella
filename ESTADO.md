@@ -1,5 +1,5 @@
 # ESTADO — CajaBella
-Última actualización: 2026-07-14 | 🎉 App publicada y funcionando en https://ctaboadaa.github.io/CajaBella/
+Última actualización: 2026-07-22 | 🎉 App publicada y funcionando en https://ctaboadaa.github.io/CajaBella/
 
 ## Qué es esta app (3 líneas máximo)
 Herramienta interna (NO se vende) para que el personal de un salón de belleza registre cada servicio prestado (fecha, tipo, monto en soles, cliente opcional) y la dueña vea un dashboard con lo facturado. Sin monetización ni versión multi-negocio: un solo salón, uso privado.
@@ -81,6 +81,12 @@ Siguiendo `27-REVISION-SEGURIDAD.md` (`npm audit`, grep de defaults inseguros, r
 **Aceptado como limitación conocida (no corregido):** las contraseñas se guardan con SHA-256 + sal de una sola pasada (Apps Script no tiene bcrypt/Argon2 nativo). Subirle un factor de trabajo (miles de iteraciones) habría invalidado TODAS las contraseñas ya guardadas (admin y Nataly Pinedo quedarían bloqueadas), así que no se tocó sin tu aprobación explícita. Mitigante real: la hoja de cálculo solo es accesible desde tu propia cuenta de Google — para que alguien vea esos hashes, primero tendría que entrar a tu Google Drive, momento en el cual ya tendría problemas mayores. Si más adelante quieres subir esto de nivel, se puede migrar en un paso aparte (cada quien re-loguea una vez).
 
 **Verificado end-to-end contra el backend real (2026-07-20):** probé el límite de intentos con un usuario inventado — los primeros 8 intentos dieron "Usuario o contraseña incorrectos", el 9no dio el mensaje de bloqueo, exactamente como se diseñó. Probé también que un empleado (cuenta de prueba creada y luego desactivada) recibe "Solo un administrador puede hacer esto" al intentar ver la lista de personal. Ambas correcciones confirmadas funcionando.
+
+## Feature: modo oscuro + app instalable (PWA) — a pedido del usuario (2026-07-22)
+- **Modo oscuro**: selector "Claro / Oscuro / Automático" en Ajustes (`components/SelectorApariencia.tsx` + `theme/ThemeContext.tsx`), guardado en `localStorage` (`cajabella_tema`). Paleta oscura derivada del look cálido actual (casi-negro con tinte, nunca #000 puro; acento aclarado para contraste) en `.dark { ... }` dentro de `index.css` — como todos los componentes ya usaban los tokens de color (`bg-bg`, `text-ink`, etc.) en vez de hex directos, el modo oscuro se propaga solo a toda la app sin tocar componentes. Script inline en `index.html` aplica la clase `.dark` ANTES de pintar (evita flash de claro→oscuro). Verificado: toggle funciona, persiste tras recargar, sin errores de consola, `<select>` nativo con contraste correcto en oscuro (no el bug típico de texto invisible).
+- **Instalable (PWA)**: ícono propio (sparkle terracota, `public/icons/`, generado con `sharp` a partir de un SVG), `manifest.webmanifest`, meta tags de iOS (`apple-touch-icon`, `apple-mobile-web-app-*`), `theme-color` para ambos esquemas, y un service worker mínimo (`public/sw.js`) que NO cachea nada (a propósito — esta app depende de datos siempre frescos) y solo existe para cumplir el requisito técnico de "instalable". Favicon también actualizado al mismo ícono de marca (antes era el genérico de Vite).
+- Sin cambios de backend — solo hace falta subir el frontend.
+- ⚠️ Pendiente: preparar las paletas de color alternativas para futuras copias de la app en otros negocios (se quedó a medio camino en la sesión anterior, no se retomó todavía).
 
 ## Sesiones completadas ✅
 - Sesión 1 — Backend Apps Script completo (auth, servicios, tipos, usuarios, dashboard, cambio de contraseña) + pantalla de Login con diseño aplicado + Google Sheet real desplegada por el usuario ("CajaBella_Datos") + Apps Script publicado como Web App. Login probado de punta a punta contra el backend real. — 2026-07-14

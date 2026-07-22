@@ -49,6 +49,41 @@
     color-scheme: light;
   }
 
+  html.dark {
+    color-scheme: dark;
+
+    /* Fondo y superficies — casi-negro con tinte cálido (nunca #000 puro) */
+    --color-bg: #211a19;
+    --color-surface: #2a201f;
+    --color-surface-elevated: #332726;
+    --color-surface-sunken: #1a1312;
+
+    /* Texto */
+    --color-ink: #f5ece8;
+    --color-ink-soft: #c9b7b2;
+    --color-ink-faint: #8a746f;
+
+    /* Acento — se aclara un poco para mantener contraste sobre fondo oscuro */
+    --color-accent: #e0748a;
+    --color-accent-soft: #4a2830;
+    --color-accent-strong: #ef94a5;
+
+    /* Secundario funcional */
+    --color-gold: #d4b483;
+    --color-gold-soft: #3d3226;
+
+    /* Semánticos */
+    --color-success: #6fae85;
+    --color-success-soft: #253b2c;
+    --color-warning: #e4a34f;
+    --color-warning-soft: #3d2e18;
+    --color-error: #e0685a;
+    --color-error-soft: #3d211d;
+
+    /* Bordes */
+    --color-line: #40312e;
+  }
+
   body {
     background: var(--color-bg);
     color: var(--color-ink);
