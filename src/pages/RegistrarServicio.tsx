@@ -15,6 +15,7 @@ export function RegistrarServicio() {
   const [fecha, setFecha] = useState(hoyISO());
   const [tipoServicioId, setTipoServicioId] = useState('');
   const [monto, setMonto] = useState('');
+  const [montoTocado, setMontoTocado] = useState(false);
   const [clienteNombre, setClienteNombre] = useState('');
   const [clienteTelefono, setClienteTelefono] = useState('');
 
@@ -35,15 +36,15 @@ export function RegistrarServicio() {
 
   useEffect(cargarTipos, [token]);
 
-  // Autocompleta el monto con el precio sugerido del tipo elegido, pero solo si el
-  // campo está vacío — nunca pisa un monto que la persona ya haya escrito a mano.
+  // Autocompleta el monto con el precio sugerido del tipo elegido, incluso al
+  // cambiar de tipo — pero nunca si la persona ya escribió un monto a mano.
   useEffect(() => {
-    if (tipos.tipo !== 'listo' || monto !== '') return;
+    if (tipos.tipo !== 'listo' || montoTocado) return;
     const seleccionado = tipos.opciones.find((t) => t.id === tipoServicioId);
     const sugerido = Number(seleccionado?.montoSugerido) || 0;
-    if (sugerido > 0) setMonto(String(sugerido));
+    setMonto(sugerido > 0 ? String(sugerido) : '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tipoServicioId, tipos]);
+  }, [tipoServicioId, tipos, montoTocado]);
 
   const montoNumero = Number(monto);
   const puedeEnviar = !!fecha && !!tipoServicioId && montoNumero > 0 && !enviando;
@@ -64,6 +65,7 @@ export function RegistrarServicio() {
       });
       setExito(true);
       setMonto('');
+      setMontoTocado(false);
       setClienteNombre('');
       setClienteTelefono('');
       setTimeout(() => setExito(false), 2500);
@@ -153,7 +155,10 @@ export function RegistrarServicio() {
                 step="0.5"
                 placeholder="0.00"
                 value={monto}
-                onChange={(e) => setMonto(e.target.value)}
+                onChange={(e) => {
+                  setMonto(e.target.value);
+                  setMontoTocado(true);
+                }}
                 className="w-full min-w-0 rounded-control border border-line bg-bg py-3 pl-10 pr-4 text-base text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent"
               />
             </div>

@@ -108,7 +108,7 @@ Siguiendo `27-REVISION-SEGURIDAD.md` (`npm audit`, grep de defaults inseguros, r
 - [x] Crear la Google Sheet y desplegar `backend/Code.gs` como Web App
 - [x] Pegar la URL del Web App en `.env`
 - [x] Publicar en GitHub Pages (listo, con GitHub Actions publicando solo en cada push)
-- [ ] Cambiar la contraseña del admin (`cambiar123`) — pantalla en Ajustes → "Cambiar mi contraseña"
+- [ ] Cambiar la contraseña del admin (`cambiar123`) — pantalla en Ajustes → "Cambiar mi contraseña" (el usuario decidió dejarla así por ahora, 2026-07-22 — sigue pendiente, no urgente)
 - [ ] Compartir el link `https://ctaboadaa.github.io/CajaBella/` con el personal del salón para que empiecen a registrar servicios
 
 ## Notas para la próxima sesión
